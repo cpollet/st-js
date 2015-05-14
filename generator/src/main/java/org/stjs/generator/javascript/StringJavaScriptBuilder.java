@@ -296,4 +296,9 @@ public class StringJavaScriptBuilder implements JavaScriptBuilder<String> {
 		return null;
 	}
 
+	@Override
+	public String newJsxExpression(String jsxString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

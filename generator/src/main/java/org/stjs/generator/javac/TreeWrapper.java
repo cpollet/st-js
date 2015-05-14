@@ -16,6 +16,7 @@ import org.stjs.generator.NamespaceUtil;
 import org.stjs.generator.name.DependencyType;
 import org.stjs.javascript.annotation.DataType;
 import org.stjs.javascript.annotation.GlobalScope;
+import org.stjs.javascript.annotation.JSXPlaceholder;
 import org.stjs.javascript.annotation.JavascriptFunction;
 import org.stjs.javascript.annotation.Namespace;
 import org.stjs.javascript.annotation.Native;
@@ -112,6 +113,10 @@ public class TreeWrapper<T extends Tree, JS> {
 		}
 		PackageElement pack = ElementUtils.enclosingPackage(element);
 		return pack == null ? null : pack.getAnnotation(annotationType);
+	}
+
+	public boolean isJsxPlaceholder() {
+		return getAnnotation(JSXPlaceholder.class) != null;
 	}
 
 	public boolean isJavaScriptFunction() {

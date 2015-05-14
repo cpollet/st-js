@@ -310,6 +310,12 @@ public class RhinoNodeVisitorSupport {
 				visitor.visitEmptyExpression((EmptyExpression) node, param);
 			}
 		});
+		addCaller(JsxExpression.class, new Caller() {
+			@Override
+			public <T> void call(Node node, AstVisitor<T> visitor, T param) {
+				visitor.visitJsxExpression((JsxExpression) node, param);
+			}
+		});
 	}
 
 	public <T> void accept(Node node, AstVisitor<T> visitor, T param) {

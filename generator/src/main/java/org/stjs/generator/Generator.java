@@ -139,7 +139,7 @@ public class Generator {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private JavaScriptBuilder<Object> getJavaScriptBuilder() {
-		// TODO: here we my return SourceJavaScript builder as well.
+		// TODO: here we may return SourceJavaScript builder as well.
 		return (JavaScriptBuilder) new RhinoJavaScriptBuilder();
 	}
 

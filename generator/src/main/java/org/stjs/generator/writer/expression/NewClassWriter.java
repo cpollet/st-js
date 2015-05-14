@@ -129,6 +129,26 @@ public class NewClassWriter<JS> implements WriterContributor<NewClassTree, JS> {
 		return context.js().newExpression(context.js().paren(typeDeclaration), arguments(visitor, tree, context));
 	}
 
+	private JS getJsxExpression(WriterVisitor<JS> visitor, TreeWrapper<NewClassTree, JS> tw) {
+		if (!tw.child(tw.getTree().getIdentifier()).isJsxPlaceholder()) {
+			return null;
+		}
+
+		Tree method = tw.getTree().getClassBody().getMembers().get(1);
+
+		JS func = jsxVisitor(visitor).scan(method, tw.getContext());
+
+		return func;
+	}
+
+	private WriterVisitor<JS> jsxVisitor(WriterVisitor<JS> visitor) {
+		WriterVisitor<JS> jsxVisitor = new WriterVisitor<JS>(visitor);
+
+		jsxVisitor.contribute(new JsxWriter<JS>(), MethodTree.class);
+
+		return jsxVisitor;
+	}
+
 	private List<JS> arguments(WriterVisitor<JS> visitor, NewClassTree tree, GenerationContext<JS> context) {
 		List<JS> arguments = new ArrayList<JS>();
 		for (Tree arg : tree.getArguments()) {
@@ -146,7 +166,13 @@ public class NewClassWriter<JS> implements WriterContributor<NewClassTree, JS> {
 	@Override
 	public JS visit(WriterVisitor<JS> visitor, NewClassTree tree, GenerationContext<JS> context) {
 		TreeWrapper<NewClassTree, JS> tw = context.getCurrentWrapper();
-		JS js = getInlineFunctionDeclaration(visitor, tw);
+
+		JS js = getJsxExpression(visitor, tw);
+		if (js != null) {
+			return js;
+		}
+
+		js = getInlineFunctionDeclaration(visitor, tw);
 		if (js != null) {
 			return js;
 		}

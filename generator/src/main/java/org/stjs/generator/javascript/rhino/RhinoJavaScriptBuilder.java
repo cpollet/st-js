@@ -576,4 +576,8 @@ public class RhinoJavaScriptBuilder implements JavaScriptBuilder<AstNode> {
 		return s;
 	}
 
+	@Override
+	public AstNode newJsxExpression(String jsxString) {
+		return new JsxExpression(jsxString);
+	}
 }

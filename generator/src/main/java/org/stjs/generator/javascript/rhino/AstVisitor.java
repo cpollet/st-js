@@ -122,4 +122,6 @@ public interface AstVisitor<T> {
 	void visitThrowStatement(ThrowStatement e, T param);
 
 	void visitCodeFragment(CodeFragment c, T param);
+
+	void visitJsxExpression(JsxExpression node, T param);
 }

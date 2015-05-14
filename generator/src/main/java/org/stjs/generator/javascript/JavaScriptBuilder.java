@@ -110,4 +110,5 @@ public interface JavaScriptBuilder<T> {
 
 	T throwStatement(@Nonnull T expr);
 
+	T newJsxExpression(String jsxString);
 }

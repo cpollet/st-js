@@ -317,7 +317,6 @@ public class RhinoJavaScriptWriter implements AstVisitor<Boolean> {
 	public void visitEmptyStatement(EmptyStatement s, Boolean param) {
 		startPosition(s);
 		println(";");
-
 	}
 
 	@Override
@@ -332,7 +331,11 @@ public class RhinoJavaScriptWriter implements AstVisitor<Boolean> {
 		visitorSupport.accept(e.getExpression(), this, param);
 		endPosition(e);
 		println(";");
+	}
 
+	@Override
+	public void visitJsxExpression(JsxExpression node, Boolean param) {
+		print(node.getJsx());
 	}
 
 	private void printStatementAsBlock(AstNode stmt, Boolean param) {

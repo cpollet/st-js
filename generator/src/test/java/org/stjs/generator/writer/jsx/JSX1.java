@@ -10,18 +10,12 @@ public class JSX1 {
 		return new JSX() {
 			/**
 			 * <div>
-			 *     <strong>
-			 *         Ca marche :)
-			 *     </strong>
+			 *     OK
 			 * </div>
 			 */
 			@Override
 			public void output() {
 			}
 		};
-	}
-
-	public String getName() {
-		return "name";
 	}
 }

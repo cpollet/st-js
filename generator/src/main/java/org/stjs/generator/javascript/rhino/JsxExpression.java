@@ -16,7 +16,7 @@ public class JsxExpression extends AstNode {
 
 	@Override
 	public String toSource(int i) {
-		return null;
+		return "[JSX]";
 	}
 
 	@Override

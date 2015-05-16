@@ -232,8 +232,8 @@ public final class GeneratorTestHelper {
 					}
 				}
 			}
+			ExecutionResult execResult = new RhinoExecutor().run(javascriptFiles, !execute);
 			if (execute) {
-				ExecutionResult execResult = new RhinoExecutor().run(javascriptFiles, !execute);
 				return execResult.getResult();
 			}
 			return content;

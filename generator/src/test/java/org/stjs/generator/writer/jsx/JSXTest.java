@@ -3,7 +3,6 @@ package org.stjs.generator.writer.jsx;
 import org.junit.Test;
 
 import static org.stjs.generator.utils.GeneratorTestHelper.assertCodeContains;
-import static org.stjs.generator.utils.GeneratorTestHelper.generate;
 
 /**
  * @author Christophe Pollet

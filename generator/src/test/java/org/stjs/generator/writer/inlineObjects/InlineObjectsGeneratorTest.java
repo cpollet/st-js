@@ -1,13 +1,10 @@
 package org.stjs.generator.writer.inlineObjects;
 
-import static org.stjs.generator.utils.GeneratorTestHelper.assertCodeContains;
-import static org.stjs.generator.utils.GeneratorTestHelper.assertCodeDoesNotContain;
-import static org.stjs.generator.utils.GeneratorTestHelper.generate;
-
 import org.junit.Test;
+import org.stjs.generator.utils.AbstractStjsTest;
 import org.stjs.generator.JavascriptFileGenerationException;
 
-public class InlineObjectsGeneratorTest {
+public class InlineObjectsGeneratorTest extends AbstractStjsTest {
 	@Test
 	public void testInlineObject() {
 		assertCodeContains(InlineObjects1.class, "o = {a:1, b:\"x\"}");
@@ -42,5 +39,31 @@ public class InlineObjectsGeneratorTest {
 		// should call object constructor {} instead of new Pojo();
 		assertCodeContains(InlineObjects5.class, "o={}");
 		assertCodeDoesNotContain(InlineObjects5.class, "Pojo");
+	}
+
+	@Test
+	public void testAssignmentWithToPropertyTemplate(){
+		assertCodeContains(InlineObjects6.class, "o={x:\"hello\",x:12}");
+	}
+
+
+	@Test(expected = JavascriptFileGenerationException.class)
+	public void testAssignmentWithToPropertyTemplateGetter(){
+		generate(InlineObjects7.class);
+	}
+
+	@Test(expected = JavascriptFileGenerationException.class)
+	public void testAssignmentWithToPropertyTemplateOnAnotherType(){
+		generate(InlineObjects8.class);
+	}
+
+	@Test(expected = JavascriptFileGenerationException.class)
+	public void testAssignmentThatLooksLikeToPropertyTemplateButIsnt(){
+		generate(InlineObjects9.class);
+	}
+
+	@Test(expected = JavascriptFileGenerationException.class)
+	public void testAssignmentThatLooksLikeToPropertyTemplateButIsnt2(){
+		generate(InlineObjects10.class);
 	}
 }

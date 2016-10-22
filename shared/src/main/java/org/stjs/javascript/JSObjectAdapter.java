@@ -15,6 +15,8 @@
  */
 package org.stjs.javascript;
 
+import java.lang.reflect.Method;
+
 import org.stjs.javascript.annotation.Adapter;
 import org.stjs.javascript.annotation.Template;
 
@@ -38,6 +40,27 @@ public final class JSObjectAdapter {
 
 	@Template("adapter")
 	public native static boolean hasOwnProperty(Object obj, String property);
+
+	@Template("adapter")
+	public static String toLocaleString(Object obj) {
+		if (obj == null) {
+			throw new Error("ReferenceError", "Cannot access property toLocaleString of null");
+		}
+		try {
+			Method toLocaleString = obj.getClass().getMethod("toLocaleString");
+			return (String) toLocaleString.invoke(obj);
+
+		}
+		catch (NoSuchMethodException e) {
+			// this one could happen. Default behavior of the Object prototy in JS is to call ToString
+			// let's do the same
+			return JSAbstractOperations.ToString(obj.toString());
+		}
+		catch (Exception e) {
+			// any other error is a real error
+			throw new Error("TypeError", "Could not access toLocaleString() method", e);
+		}
+	}
 
 	@Template("toProperty")
 	public native static Map<String, Object> $prototype(Object obj);

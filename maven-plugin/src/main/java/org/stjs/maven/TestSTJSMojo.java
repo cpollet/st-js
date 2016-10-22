@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 
@@ -16,19 +18,19 @@ import org.stjs.generator.Generator;
 import org.stjs.generator.GeneratorConstants;
 
 /**
- * 
+ *
  * @goal generate-test
  * @phase process-test-classes
  * @requiresDependencyResolution test
  * @author acraciun
- * 
+ *
  */
 public class TestSTJSMojo extends AbstractSTJSMojo {
 	private static final String MAVEN_TEST_SKIP = "maven.test.skip";
 
 	/**
 	 * The source directories containing the sources to be compiled.
-	 * 
+	 *
 	 * @parameter default-value="${project.testCompileSourceRoots}"
 	 * @required
 	 */
@@ -38,7 +40,7 @@ public class TestSTJSMojo extends AbstractSTJSMojo {
 	 * <p>
 	 * Specify where to place generated source files
 	 * </p>
-	 * 
+	 *
 	 * @parameter default-value="${project.build.directory}/generated-test-js"
 	 */
 	private File generatedTestSourcesDirectory;
@@ -54,13 +56,19 @@ public class TestSTJSMojo extends AbstractSTJSMojo {
 	}
 
 	@Override
-	protected GenerationDirectory getGeneratedSourcesDirectory() {
-		File baseDir = project.getBasedir();
-		File classpath = new File(generatedTestSourcesDirectory.getAbsolutePath().substring(
-				baseDir.getAbsolutePath().length() + 1));
+	protected GenerationDirectory getGeneratedSourcesDirectory() throws MojoExecutionException {
+		try {
+			File baseDir = project.getBasedir();
+			File classpath = new File(generatedTestSourcesDirectory.getAbsolutePath().substring(
+					baseDir.getAbsolutePath().length() + 1));
+			URI runtimePath = new URI("classpath:/");
 
-		GenerationDirectory gendir = new GenerationDirectory(generatedTestSourcesDirectory, classpath, new File(""));
-		return gendir;
+			GenerationDirectory gendir = new GenerationDirectory(generatedTestSourcesDirectory, classpath, runtimePath);
+			return gendir;
+
+		}catch(URISyntaxException use){
+			throw new MojoExecutionException("Could not generate runtime path");
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,7 +79,7 @@ public class TestSTJSMojo extends AbstractSTJSMojo {
 
 	@Override
 	protected boolean getCopyStjsSupportFile() {
-		return true;
+		return false;
 	}
 
 	@Override

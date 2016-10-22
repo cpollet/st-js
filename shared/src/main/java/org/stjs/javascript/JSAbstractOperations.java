@@ -20,9 +20,10 @@ import java.text.DecimalFormat;
 class JSAbstractOperations {
 
 	private static final DecimalFormat PLAIN_INTEGER_FORMAT = new DecimalFormat("#0");
-	private static final BigInteger UINT_MAX_VALUE = new BigInteger("4294967296"); // = 2^32
-	private static final BigInteger SINT_MAX_VALUE = new BigInteger("2147483648"); // = 2^31
-	private static final BigInteger USHORT_MAX_VALUE = new BigInteger("65536"); // = 2^16
+	public static final BigInteger UINT_MAX_VALUE = new BigInteger("4294967296"); // = 2^32
+	public static final Double UINT_MAX_VALUE_D = 4294967296.0; // = 2^32
+	public static final BigInteger SINT_MAX_VALUE = new BigInteger("2147483648"); // = 2^31
+	public static final BigInteger USHORT_MAX_VALUE = new BigInteger("65536"); // = 2^16
 
 	/**
 	 * The [[DefaultValue]] internal method of Object, as close as possible to the definition in the ECMA-262
@@ -87,10 +88,10 @@ class JSAbstractOperations {
 				return callToString(arg);
 			}
 			catch (InvocationTargetException e) {
-				throw new RuntimeException(e.getTargetException().getMessage(), e.getTargetException());
+				throw new Error("TypeError", e.getTargetException().getMessage(), e.getTargetException());
 			}
 			catch (Exception e) {
-				throw new RuntimeException(e);
+				throw new Error("TypeError", e.getMessage(), e);
 			}
 
 			// toString is guaranteed to be callable and return a primitive value in Java, so we will
@@ -105,11 +106,11 @@ class JSAbstractOperations {
 					}
 				}
 				catch (InvocationTargetException e) {
-					throw new RuntimeException(e.getTargetException().getMessage(), e.getTargetException());
+					throw new Error("TypeError", e.getTargetException().getMessage(), e.getTargetException());
 				}
 				catch (Exception e) {
 					// we can still get exception like SecurityException or IllegalAccessException here
-					throw new RuntimeException(e);
+					throw new Error("TypeError", e.getMessage(), e);
 				}
 			}
 
@@ -119,12 +120,13 @@ class JSAbstractOperations {
 				return callToString(arg);
 			}
 			catch (InvocationTargetException e) {
-				throw new RuntimeException(e.getTargetException().getMessage(), e.getTargetException());
+				throw new Error("TypeError", e.getTargetException().getMessage(), e.getTargetException());
 			}
 			catch (Exception e) {
-				throw new RuntimeException(e);
+				throw new Error("TypeError", e.getMessage(), e);
 			}
 		}
+		// should not happen due to user code
 		throw new IllegalArgumentException("Unknown hint: " + hint);
 	}
 
@@ -267,7 +269,7 @@ class JSAbstractOperations {
 		if (arg == null) {
 			return 0.0d;
 		}
-		String trimmed = ((String) arg).trim();
+		String trimmed = arg.trim();
 		if (trimmed.isEmpty()) {
 			return 0.0d;
 
@@ -442,7 +444,7 @@ class JSAbstractOperations {
 	 */
 	static Object ToObject(Object arg) {
 		if (arg == null) {
-			throw new RuntimeException("TypeError");
+			throw new Error("TypeError", "null is not an Object");
 		}
 		return arg;
 	}

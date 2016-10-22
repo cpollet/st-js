@@ -17,14 +17,19 @@ package org.stjs.testing.driver;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.stjs.generator.ClassResolver;
+import org.stjs.generator.DefaultClassResolver;
+import org.stjs.generator.DependencyCollector;
 import org.stjs.testing.driver.browser.Browser;
 import org.stjs.testing.driver.browser.ChromeBrowser;
 import org.stjs.testing.driver.browser.DesktopDefaultBrowser;
@@ -39,7 +44,7 @@ import com.google.common.io.Closeables;
 
 /**
  * this is a wrapper around the configuration files stjs-test.properties.
- * 
+ *
  * @author acraciun
  */
 public class DriverConfiguration {
@@ -54,6 +59,7 @@ public class DriverConfiguration {
 	private static final String PROP_BROWSERS = "stjs.test.browsers";
 	private static final String PROP_TEST_TIMEOUT = "stjs.test.testTimeout";
 	private static final String PROP_DEBUG = "stjs.test.debug";
+	private static final String PROP_DEBUG_JAVA_SCRIPT = "stjs.test.debugJavaScript";
 
 	private int port = 8055;
 	private int waitForBrowser = 10;
@@ -61,9 +67,13 @@ public class DriverConfiguration {
 	private boolean startBrowser = true;
 	private int testTimeout = 2;
 	private boolean debugEnabled = false;
+	private boolean debugJavaScript = false;
 	private List<Browser> browsers;
 
 	private final ClassLoader classLoader;
+	private final ClassResolver stjsClassResolver;
+	private final TestResourceResolver resourceResolver;
+	private final DependencyCollector dependencyCollector;
 
 	private Properties props;
 
@@ -106,10 +116,29 @@ public class DriverConfiguration {
 		if (props.get(PROP_DEBUG) != null) {
 			debugEnabled = Boolean.parseBoolean(props.getProperty(PROP_DEBUG));
 		}
+
+		if (props.get(PROP_DEBUG_JAVA_SCRIPT) != null) {
+			debugJavaScript = Boolean.parseBoolean(props.getProperty(PROP_DEBUG_JAVA_SCRIPT));
+		} else {
+			debugJavaScript = isJavaDebuggerAttached();
+		}
+
 		classLoader = new WebAppClassLoader(new URL[] {}, klass.getClassLoader(), debugEnabled);
+		stjsClassResolver = new DefaultClassResolver(classLoader);
+		resourceResolver = new TestResourceResolver(classLoader);
+		dependencyCollector = new DependencyCollector();
 
 		// load browsers last
 		browsers = instantiateBrowsers();
+		if(browsers.isEmpty()){
+			throw new IllegalStateException("No browser was successfully configured. Unit tests cannot run without a valid environment.");
+		}
+	}
+
+	private boolean isJavaDebuggerAttached() {
+		String vmargs = ManagementFactory.getRuntimeMXBean().getInputArguments().toString();
+		System.out.println(vmargs);
+		return vmargs.contains("-agentlib:jdwp") || vmargs.contains("-Xrunjdwp");
 	}
 
 	private String getConfigFileLocation() {
@@ -191,8 +220,20 @@ public class DriverConfiguration {
 		this.debugEnabled = debugEnabled;
 	}
 
+	public boolean isDebugJavaScript() {
+		return debugJavaScript;
+	}
+
+	public void setDebugJavaScript(boolean debugJavaScript) {
+		this.debugJavaScript = debugJavaScript;
+	}
+
 	public ClassLoader getClassLoader() {
 		return classLoader;
+	}
+
+	public ClassResolver getStjsClassResolver(){
+		return this.stjsClassResolver;
 	}
 
 	public String getProperty(String name) {
@@ -201,6 +242,14 @@ public class DriverConfiguration {
 
 	public String getProperty(String name, String defaultValue) {
 		return this.props.getProperty(name, defaultValue);
+	}
+
+	public DependencyCollector getDependencyCollector() {
+		return dependencyCollector;
+	}
+
+	public TestResource getResource(String httpUrl) throws URISyntaxException {
+		return resourceResolver.resolveResource(httpUrl);
 	}
 
 	public URL getServerURL() {

@@ -30,6 +30,7 @@ public class ArrayIndexOfTest {
 		assertEquals(-1, a.indexOf(true));
 		assertEquals(-1, a.indexOf(5));
 		assertEquals(-1, a.indexOf("str1"));
+		assertEquals(-1, a.indexOf(null));
 		assertEquals(-1, a.indexOf(new Object()));
 	}
 
@@ -82,10 +83,16 @@ public class ArrayIndexOfTest {
 	}
 
 	@Test
+	public void testIndexOf07() {
+		Array<Object> a = new Array<Object>("NaN", null, 0, false, null, "false", Double.NaN);
+		// NaN is equal to nothing, including itself.
+		assertEquals(-1, a.indexOf(Double.NaN));
+	}
+
+	@Test
 	public void testIndexOf08() {
-		Array<Object> a =
-				new Array<Object>(false, null, null, "0", new Object(), -1.33333333333333333, "str", -0, true, +0, 1, 1, 0, false, -(4 / 3),
-						-(4 / 3));
+		Array<Object> a = new Array<Object>(false, null, null, "0", new Object(), -1.33333333333333333, "str", -0,
+				true, +0, 1, 1, 0, false, -(4 / 3), -(4 / 3));
 		assertEquals(14, a.indexOf(-(4 / 3)));
 		assertEquals(7, a.indexOf(0));
 		assertEquals(7, a.indexOf(-0));

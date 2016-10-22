@@ -9,13 +9,19 @@
 	<parent>
 		<groupId>org.st-js</groupId>
 		<artifactId>stjs</artifactId>
-		<version>3.1.5-SNAPSHOT</version>
+		<version>3.3.3-SNAPSHOT</version>
 	</parent>
 
 	<properties>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.st-js</groupId>
+			<artifactId>client-runtime</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

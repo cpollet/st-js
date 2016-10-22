@@ -1,21 +1,19 @@
 package org.stjs;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 /**
  * This integration test checks if a web jar is correctly packaged, and if tests on this webjar can run.
  *
  * @author acraciun
  */
-public class STJSPackageWebJarTest {
+public class STJSPackageWebJarTest extends AbstractPackagingTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -29,7 +27,7 @@ public class STJSPackageWebJarTest {
 		// coming from the configuration of surefire plugin outside
 		verifier.getCliOptions().add("-Dstjs.version=" + System.getProperty("stjs.version"));
 
-		verifier.executeGoal("install");
+		verifier.executeGoals(Arrays.asList("clean", "install"));
 
 		verifier.verifyErrorFreeLog();
 
@@ -38,13 +36,16 @@ public class STJSPackageWebJarTest {
 
 		// all resources that must be loaded by a browser must be packaged in the folder
 		// specified in <generatedSourcesDirectory>
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/org/stjs/example/lib/stjs/STJSLibExample.js");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/org/stjs/example/lib/stjs/STJSLibExample.map");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/org/stjs/example/lib/stjs/STJSLibExample.java");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/stjs/example/stjs-lib-example.js");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/DefaultPackageExample.js");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/DefaultPackageExample.map");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/DefaultPackageExample.java");
+		assertContainsEntry(entryNames,
+				"META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/org/stjs/example/lib/stjs/STJSLibExample.js");
+		assertContainsEntry(entryNames,
+				"META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/org/stjs/example/lib/stjs/STJSLibExample.map");
+		assertContainsEntry(entryNames,
+				"META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/org/stjs/example/lib/stjs/STJSLibExample.java");
+		assertContainsEntry(entryNames, "META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/stjs/example/stjs-lib-example.js");
+		assertContainsEntry(entryNames, "META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/DefaultPackageExample.js");
+		assertContainsEntry(entryNames, "META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/DefaultPackageExample.map");
+		assertContainsEntry(entryNames, "META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/DefaultPackageExample.java");
 		assertNotContainsEntry(entryNames, "org/stjs/example/lib/stjs/STJSLibExample.js");
 		assertNotContainsEntry(entryNames, "org/stjs/example/lib/stjs/STJSLibExample.map");
 		assertNotContainsEntry(entryNames, "org/stjs/example/lib/stjs/STJSLibExample.java");
@@ -56,28 +57,28 @@ public class STJSPackageWebJarTest {
 		// Class files must be packaged at the root of the web jar
 		assertContainsEntry(entryNames, "org/stjs/example/lib/stjs/STJSLibExample.class");
 		assertContainsEntry(entryNames, "DefaultPackageExample.class");
-		assertNotContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/org/stjs/example/lib/stjs/STJSLibExample.class");
-		assertNotContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/DefaultPackageExample.class");
+		assertNotContainsEntry(entryNames,
+				"META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/org/stjs/example/lib/stjs/STJSLibExample.class");
+		assertNotContainsEntry(entryNames, "META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/DefaultPackageExample.class");
 
 		// the .stjs properties files must be in both places (classpath and webjar path), so that we can easily do bidirectional mapping between
 		// .js and .class file locations
 		assertContainsEntry(entryNames, "org/stjs/example/lib/stjs/STJSLibExample.stjs");
 		assertContainsEntry(entryNames, "DefaultPackageExample.stjs");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/org/stjs/example/lib/stjs/STJSLibExample.stjs");
-		assertContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/DefaultPackageExample.stjs");
+		assertContainsEntry(entryNames,
+				"META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/org/stjs/example/lib/stjs/STJSLibExample.stjs");
+		assertContainsEntry(entryNames, "META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/DefaultPackageExample.stjs");
 
 		// stjs.js should not be included in a webjar (it is declared as a dependency instead)
 		assertNotContainsEntry(entryNames, "stjs.js");
-		assertNotContainsEntry(entryNames, "META-INF/resources/webjar/package-js-webjar/stjs.js");
+		assertNotContainsEntry(entryNames, "META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/stjs.js");
+
+		assertEntryContainsText( //
+				artifactFile, //
+				"META-INF/resources/webjars/package-js-webjar/1.0.0-SNAPSHOT/org/stjs/example/lib/stjs/STJSLibExample.stjs", //
+				"js=webjar\\:/org/stjs/example/lib/stjs/STJSLibExample.js" //
+		);
 
 		verifier.resetStreams();
-	}
-
-	private static void assertContainsEntry(Set<String> entries, String entry) {
-		assertTrue("The set " + entries + " should contain entry: " + entry, entries.contains(entry));
-	}
-
-	private static void assertNotContainsEntry(Set<String> entries, String entry){
-		assertFalse("The set " + entries + " should not contain entry: " + entry, entries.contains(entry));
 	}
 }

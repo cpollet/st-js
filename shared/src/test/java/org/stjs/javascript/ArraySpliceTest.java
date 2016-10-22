@@ -209,7 +209,7 @@ public class ArraySpliceTest {
 		assertArrayEquals($array(0, 4, 5), x);
 	}
 
-	private static <T> void assertArrayEquals(Array<T> expected, Array<?> actual) {
+	private static <T> void assertArrayEquals(Array<T> expected, Array<T> actual) {
 		assertEquals(expected.$length(), actual.$length());
 		for (int i = 0; i < expected.$length(); i++) {
 			assertEquals(expected.$get(i), actual.$get(i));

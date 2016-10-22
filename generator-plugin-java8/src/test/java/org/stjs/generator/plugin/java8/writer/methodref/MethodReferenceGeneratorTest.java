@@ -1,12 +1,12 @@
 package org.stjs.generator.plugin.java8.writer.methodref;
 
+import org.stjs.generator.utils.AbstractStjsTest;
+
 import static org.junit.Assert.assertEquals;
-import static org.stjs.generator.utils.GeneratorTestHelper.assertCodeContains;
-import static org.stjs.generator.utils.GeneratorTestHelper.execute;
 
 import org.junit.Test;
 
-public class MethodReferenceGeneratorTest {
+public class MethodReferenceGeneratorTest extends AbstractStjsTest {
 	@Test
 	public void testStaticMethodRef() {
 		assertCodeContains(MethodRef1.class, "calculate(MethodRef1.inc)");
@@ -16,8 +16,15 @@ public class MethodReferenceGeneratorTest {
 	@Test
 	public void testInstanceMethodRef() {
 		assertCodeContains(MethodRef2.class,
-				"calculate(function(){return MethodRef2.prototype.inc2.call(arguments[0], arguments[1]);}, new MethodRef2(), 1)");
+				"calculate(stjs.bind(\"inc2\"), new MethodRef2(), 1)");
 		assertEquals(3, ((Number)execute(MethodRef2.class)).intValue());
+	}
+
+	@Test
+	public void testInstanceMethodRefWithInterface() {
+		assertCodeContains(MethodRef9.class,
+				"calculate(stjs.bind(\"inc2\"), new MethodRef9.IncImpl(), 1)");
+		assertEquals(3, ((Number)execute(MethodRef9.class)).intValue());
 	}
 
 	@Test

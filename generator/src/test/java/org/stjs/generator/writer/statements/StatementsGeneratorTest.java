@@ -1,16 +1,13 @@
 package org.stjs.generator.writer.statements;
 
 import static org.junit.Assert.assertEquals;
-import static org.stjs.generator.utils.GeneratorTestHelper.assertCodeContains;
-import static org.stjs.generator.utils.GeneratorTestHelper.assertCodeDoesNotContain;
-import static org.stjs.generator.utils.GeneratorTestHelper.execute;
-import static org.stjs.generator.utils.GeneratorTestHelper.generate;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.stjs.generator.utils.AbstractStjsTest;
 import org.stjs.generator.JavascriptFileGenerationException;
 
-public class StatementsGeneratorTest {
+public class StatementsGeneratorTest extends AbstractStjsTest {
 	@Test
 	public void testFor() {
 		assertCodeContains(Statements1.class, "for (var i = 0; i < 10; i++) {");
@@ -89,6 +86,11 @@ public class StatementsGeneratorTest {
 	}
 
 	@Test
+	public void testForEachInWithIterable() {
+		assertCodeContains(Statements22_ForEachIterable.class, "for (var iterator$oneOfTheString = myStringList.iterator(); iterator$oneOfTheString.hasNext(); ) { var oneOfTheString = iterator$oneOfTheString.next(); }");
+	}
+
+	@Test
 	public void testForEachArrayBlock() {
 		assertCodeContains(Statements12.class, "if (!(a).hasOwnProperty(i)) continue;var x");
 	}
@@ -100,7 +102,9 @@ public class StatementsGeneratorTest {
 
 	@Test
 	public void testForEachMapBlock() {
-		assertCodeDoesNotContain(Statements13.class, "hasOwnProperty");
+		String code = generate(Statements13.class);
+		assertCodeDoesNotContain(code, "hasOwnProperty");
+		assertCodeContains(code, "for (var i in a) {");
 	}
 
 	@Test

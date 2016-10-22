@@ -1,12 +1,10 @@
 package org.stjs.generator.writer.methods;
 
-import static org.stjs.generator.utils.GeneratorTestHelper.assertCodeContains;
-import static org.stjs.generator.utils.GeneratorTestHelper.generate;
-
 import org.junit.Test;
+import org.stjs.generator.utils.AbstractStjsTest;
 import org.stjs.generator.JavascriptFileGenerationException;
 
-public class MethodsGeneratorTest {
+public class MethodsGeneratorTest extends AbstractStjsTest {
 	@Test
 	public void testPublicInstanceMethod() {
 		assertCodeContains(Methods1.class, //
@@ -79,6 +77,13 @@ public class MethodsGeneratorTest {
 	public void testVarArgsMethod3() {
 		// only one var arg argument is allowed and the name should be "arguments" -> like the js variable
 		assertCodeContains(Methods11.class, "prototype.method=function(_arguments){}");
+	}
+
+	@Test
+	public void testVarArgsMethod4Native() {
+		assertCodeContains(Methods11_b.class, "prototype.test=function(props){}");
+
+		assertCodeDoesNotContain(Methods11_b.class, "prototype.method=function");
 	}
 
 	@Test

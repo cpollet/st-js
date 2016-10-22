@@ -1,5 +1,9 @@
 <html>
 <head>
+<meta http-equiv="cache-control" content="max-age=0"/>
+<meta http-equiv="cache-control" content="no-cache"/>
+<meta http-equiv="expires" content="0"/>
+<meta http-equiv="pragma" content="no-cache"/>
 <script language="javascript" src="/stacktrace.js"></script>
 <script>
 	var browserId = -1;
@@ -29,11 +33,11 @@
 		log(s);
 		logAppend("<br>");
 	}
-	
+
 	function showStack(idx){
 		stackDiv.innerHTML = stacktraces[idx];
 	}
-	
+
 
 	function startingTest(testedClassName, methodName){
 		log('<b>' + testedClassName + '</b>.' + methodName + ": ");
@@ -64,7 +68,7 @@
 			//errorStack.splice(0,1);
 			errorStack.splice(errorStack.length - 1,1);
             location = encodeURIComponent(errorStack.join(";"));
-			
+
 			for(var i = 0; i < errorStack.length; ++i){
 				if (errorStack[i].indexOf("junit.js") < 0) {
 					isAssert = (i > 1);
@@ -90,7 +94,7 @@
 	}
 
 	function runFirstTest(){
-		reportResultAndRunNextTest("OK", null, true);
+        reportResultAndRunNextTest("OK", null, true);
 	}
 
 	// Shamelessly lifted from
@@ -148,7 +152,7 @@
 		overflow-x: auto;
 		padding-bottom: 20px;
 	}
-	
+
 	.time {
 		color:lightgray;
 	}
